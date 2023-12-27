@@ -200,11 +200,12 @@ class MainWindow(QMainWindow):
 
     def on_disconnect_lcu(self):
         """当连接 lcu 的 ws 断开"""
-        self.home.hide()
-        self.menu.settings_btn.hide()
-        self.menu.question_btn.hide()
-        self.main_layout.removeWidget(self.home)
-        self.main_layout.insertWidget(1, self.refresh)
+        if self.home:
+            self.home.hide()
+            self.menu.settings_btn.hide()
+            self.menu.question_btn.hide()
+            self.main_layout.removeWidget(self.home)
+            self.main_layout.insertWidget(1, self.refresh)
 
     def lcu_ws_status_handler(self, status: bool):
         def _task():

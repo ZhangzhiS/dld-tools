@@ -91,7 +91,7 @@ class LOLConnector:
             raise requests.exceptions.HTTPError(resp.status_code)
         return resp
 
-    @retry()
+    # @retry()
     def get_current_summoner(self) -> CurrentSummoner:
         """
         获取当前召唤师信息
@@ -99,17 +99,17 @@ class LOLConnector:
         resp = self.__request(lcu_api.GetCurrentSummoner())
         return CurrentSummoner.model_validate(resp.json())
 
-    @retry()
+    # @retry()
     def accept_game(self) -> None:
         self.__request(lcu_api.AcceptGame())
 
-    @retry()
+    # @retry()
     def get_ready_check_status(self) -> ReadyCheckStatus:
         resp = self.__request(lcu_api.GetReadyCheckStatus())
         print(resp.json())
         return ReadyCheckStatus.model_validate(resp.json())
 
-    @retry()
+    # @retry()
     def get_avatar(self, avatar_id: int = 1234) -> str:
         """获取头像"""
         avatar = os.path.join(cfg.ProfileIconPath, f"{avatar_id}.jpg")
@@ -121,14 +121,14 @@ class LOLConnector:
                 f.write(res.content)
         return avatar
 
-    @retry()
+    # @retry()
     def get_ux_state(self) -> bool:
         resp = self.__request(lcu_api.GetUXState())
         if resp.status_code:
             return True
         return False
 
-    @retry()
+    # @retry()
     def get_summoner_games(
         self, puuid: str, begIndex: int = 0, endIndex: int = 19
     ) -> SummonerGamesInfo:

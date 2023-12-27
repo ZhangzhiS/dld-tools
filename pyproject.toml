@@ -23,6 +23,10 @@ test_sources = [
 
 requires = [
     "pyside6~=6.2",
+    "pydantic",
+    "websocket-client",
+    "loguru",
+    ""
 ]
 test_requires = [
     "pytest",
