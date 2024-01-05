@@ -10,10 +10,10 @@ author_email = "zhangzhi@example.com"
 
 [tool.briefcase.app.dld-tools]
 formal_name = "大乱斗助手"
-description = "My first application"
-long_description = """More details about the app should go here.
+description = "主要针对大乱斗的小助手"
+long_description = """英雄联盟大乱斗助手，只针对大乱斗需要的一些功能进行开发.
 """
-icon = "src/dld_tools/resources/dld-tools"
+icon = "src/dld_tools/resources/dld-tools.jpg"
 sources = [
     "src/dld_tools",
 ]
@@ -26,7 +26,8 @@ requires = [
     "pydantic",
     "websocket-client",
     "loguru",
-    ""
+    "requests",
+    "psutil"
 ]
 test_requires = [
     "pytest",

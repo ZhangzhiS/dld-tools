@@ -20,7 +20,7 @@ class UserInfoWidget(QWidget):
         self.userinfo_h_layout = QHBoxLayout(self)
         self.userinfo_h_layout.setObjectName("userinfo_h_layout")
         self.userinfo_h_layout.setSpacing(0)
-        self.userinfo_h_layout.setContentsMargins(50, 0, 0, 0)
+        self.userinfo_h_layout.setContentsMargins(40, 0, 0, 0)
 
         self.display_name = display_name
         self.icon_path = icon_path
@@ -28,7 +28,6 @@ class UserInfoWidget(QWidget):
         self.__init_ui()
 
     def __init_ui(self):
-
         # 绘制头像
         self.avatar = AvatarLabel(parent=self)
         self.avatar.painter_avatar(self.icon_path)
@@ -45,7 +44,7 @@ class UserInfoWidget(QWidget):
         self.text_info_layout.addWidget(
             self.nickname,
             0,
-            Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom,
+            Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter,
         )
         self.userinfo_h_layout.addLayout(self.text_info_layout)
 

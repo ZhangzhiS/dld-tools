@@ -23,7 +23,7 @@ class CurrentSummoner(BaseModel):
     xpUntilNextLevel: int
     profileIconId: int
     puuid: str
-    icon_path: Optional[str]
+    icon_path: Optional[str] = ""
 
 
 class ReadyCheckStatus(BaseModel):

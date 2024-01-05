@@ -85,7 +85,7 @@ class LOLEventListener(QThread):
         pass
 
     def on_close(self, ws, close_status_code, close_msg):
-        pass
+        self.lol_event_signal.ws_status_changed.emit(False)
 
     def close_websocket(self):
         if self.client is not None:
@@ -100,13 +100,12 @@ class LOLEventListener(QThread):
         while True:
             try:
                 resp = lol_connector.get_ux_state()
+                print(resp)
             except Exception:
                 resp = False
             if resp:
                 break
             self.sleep(1)
-
-        print("start")
 
         self.client = websocket.WebSocketApp(
             self.url,

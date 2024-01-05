@@ -63,3 +63,4 @@ logs/
 
 # config.json
 src/dld_tools/core/config.json
+src/dld_tools/resources/game

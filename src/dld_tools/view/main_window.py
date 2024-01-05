@@ -44,11 +44,14 @@ class MainWindow(QMainWindow):
         self.lol_event_listener = None
         self.lol_client_listener = None
         self.tray_icon = CustomTrayIcon(self)
-        self.tray_icon.open_app_signal.connect(self.show)
-        self.tray_icon.exit_app_signal.connect(self.__on_close)
+        self.tray_icon.open_app_signal.connect(self.__on_show)
+        self.tray_icon.exit_app_signal.connect(self.__custome_close)
         self.tray_icon.show()
-
+        self.__init_signal()
         self.__on_open()
+
+    def __init_signal(self):
+        self.init_home_single.connect(self.init_home_interface)
 
     def __on_open(self):
         self.__init_ui()
@@ -63,15 +66,19 @@ class MainWindow(QMainWindow):
         self.hide()
 
     def __on_show(self):
-        pass
+        self.show()
 
     def __on_close(self):
         if cfg.CloseToTray:
             self.__on_hide()
             return
-        if self.lol_client_listener:
+        self.__custome_close()
+        
+    def __custome_close(self):
+        self.show()
+        if self.lol_client_listener is not None:
             self.lol_client_listener.terminate()
-        if self.lol_event_listener:
+        if self.lol_event_listener is not None:
             self.lol_event_listener.terminate()
         self.close()
 
@@ -129,6 +136,7 @@ class MainWindow(QMainWindow):
             lol_auth_info = parse_lol_auth_info(pid)
             self.lol_token = lol_auth_info["remoting-auth-token"]
             self.lol_port = lol_auth_info["app-port"]
+            lol_connector.start(self.lol_token, self.lol_port)
             self.lol_event_listener = LOLEventListener(
                 self, self.lol_token, self.lol_port
             )
@@ -165,7 +173,8 @@ class MainWindow(QMainWindow):
         self.main_layout.insertWidget(1, self.home)
         self.menu.question_btn.show()
         self.menu.settings_btn.show()
-        self.menu.menu_btn_connect(self.menu.question_btn, self.init_settings_interface)
+        self.menu.menu_btn_connect(self.menu.settings_btn, self.init_settings_interface)
+        self.menu.menu_btn_connect(self.menu.question_btn, self.init_about)
         self.home.show()
 
     def init_settings_interface(self):
@@ -175,8 +184,7 @@ class MainWindow(QMainWindow):
         self.home.hide()
         self.menu.settings_btn.hide()
         self.menu.question_btn.hide()
-        if not self.settings:
-            self.settings = SettingsInterface(self.main)
+        self.settings = SettingsInterface(self.main)
         self.main_layout.removeWidget(self.home)
         self.main_layout.insertWidget(1, self.settings)
         self.menu.menu_btn_connect(
@@ -202,10 +210,12 @@ class MainWindow(QMainWindow):
         """当连接 lcu 的 ws 断开"""
         if self.home:
             self.home.hide()
+            self.refresh.show()
             self.menu.settings_btn.hide()
             self.menu.question_btn.hide()
             self.main_layout.removeWidget(self.home)
             self.main_layout.insertWidget(1, self.refresh)
+
 
     def lcu_ws_status_handler(self, status: bool):
         def _task():
@@ -216,11 +226,10 @@ class MainWindow(QMainWindow):
                 current_summoner.puuid
             )
             self.init_home_single.emit(current_summoner, history_match_games)
-
         if status:
             threading.Thread(target=_task).start()
             return
-        self.on_disconnect_lcu()
+        # self.on_disconnect_lcu()
 
     def __auto_accept_game(self):
         def _task():

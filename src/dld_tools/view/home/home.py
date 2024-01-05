@@ -28,7 +28,7 @@ class HomeInterface(QWidget):
         self.__init_ui()
 
     def __init_ui(self):
-        home_layout = QVBoxLayout()
+        home_layout = QVBoxLayout(self)
         # 设置组件间距以及边距
         home_layout.setSpacing(0)
         home_layout.setContentsMargins(0, 0, 0, 0)

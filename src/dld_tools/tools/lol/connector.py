@@ -87,11 +87,13 @@ class LOLConnector:
     def __request(self, req: BaseRequest):
         prepare_req = self.__prepare(req)
         resp = self.session.send(prepare_req, verify=False)
-        if bool(resp):
-            raise requests.exceptions.HTTPError(resp.status_code)
-        return resp
+        
+        if resp.status_code == 200:
+            return resp
+        elif resp.status_code == 204:
+            return True
 
-    # @retry()
+    @retry()
     def get_current_summoner(self) -> CurrentSummoner:
         """
         获取当前召唤师信息
@@ -133,8 +135,6 @@ class LOLConnector:
         self, puuid: str, begIndex: int = 0, endIndex: int = 19
     ) -> SummonerGamesInfo:
         resp = self.__request(lcu_api.GetSummonerGames(puuid, begIndex, endIndex))
-        with open("g.json", "w") as f:
-            json.dump(resp.json(), f)
         return SummonerGamesInfo.model_validate(resp.json())
 
     def close(self):
