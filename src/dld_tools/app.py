@@ -21,5 +21,5 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     main_window = MainWindow(metadata["Version"])  # noqa
     main_window.show()
-    app.setWindowIcon(QIcon("resources/dld-tools.jpg"))
+    app.setWindowIcon(QIcon("resources/dld-tools.png"))
     sys.exit(app.exec())

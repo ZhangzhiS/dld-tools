@@ -2,7 +2,7 @@
 [tool.briefcase]
 project_name = "大乱斗助手"
 bundle = "com.example"
-version = "0.0.1"
+version = "0.0.3"
 url = "https://example.com/dld-tools"
 license = "GNU General Public License v3 or later (GPLv3+)"
 author = "zhangzhi"
@@ -13,7 +13,7 @@ formal_name = "大乱斗助手"
 description = "主要针对大乱斗的小助手"
 long_description = """英雄联盟大乱斗助手，只针对大乱斗需要的一些功能进行开发.
 """
-icon = "src/dld_tools/resources/dld-tools.jpg"
+icon = "src/dld_tools/resources/dld-tools"
 sources = [
     "src/dld_tools",
 ]

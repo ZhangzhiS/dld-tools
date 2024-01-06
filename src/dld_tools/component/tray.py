@@ -9,7 +9,7 @@ class CustomTrayIcon(QSystemTrayIcon):
 
     def __init__(self, parent: QObject) -> None:
         super().__init__(parent)
-        self.setIcon(QIcon("resources/dld-tools.jpg"))
+        self.setIcon(QIcon("resources/dld-tools.png"))
 
         self.menu = QMenu()
         self.menu.triggered.connect(self.__activate)
