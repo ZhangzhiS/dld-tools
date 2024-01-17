@@ -1,8 +1,11 @@
 import base64
 import json
 import ssl
+import os
+from time import time
 
 import websocket
+from dld_tools.core.config import cfg
 from dld_tools.tools.help import write_to_file
 from dld_tools.tools.lol.data_schema import GameFlowEvent
 from dld_tools.tools.lol.utils import get_lol_process_pid, is_lol_game_process_exist
@@ -66,13 +69,19 @@ class LOLEventListener(QThread):
 
     def on_message(self, _, message):
         try:
-            message = json.loads(message)[2]
+            data = json.loads(message)[2]
         except Exception:
             return
-        uri = message["uri"]
+        uri = data["uri"]
+        if cfg.DeBug:
+            if not os.path.exists(cfg.LogPath):
+                os.makedirs(cfg.LogPath)
+            with open(os.path.join(cfg.LogPath, f"{time()}-{uri}.json"), "w") as f:
+                json.dump(data.model_dump(), f)
+
         if uri in self._subscribe_event:
             data_model = self._subscribe_event[uri]["data_model"].model_validate(
-                message
+                data
             )
             write_to_file(data_model)
             self._subscribe_event[uri]["signal"].emit(data_model)
