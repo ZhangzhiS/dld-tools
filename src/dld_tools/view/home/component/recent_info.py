@@ -34,7 +34,6 @@ class RecentInfoWidget(QWidget):
         self.recent_bar_widget.setObjectName("recentBar")
         self.recent_bar_widget.setStyleSheet(
             """#recentBar {
-            background-color: rgb(255, 255, 255);
             border-radius: 10px;
             }"""
         )

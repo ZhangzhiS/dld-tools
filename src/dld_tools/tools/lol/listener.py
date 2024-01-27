@@ -72,19 +72,20 @@ class LOLEventListener(QThread):
             data = json.loads(message)[2]
         except Exception:
             return
-        uri = data["uri"]
-        if cfg.DeBug:
-            if not os.path.exists(cfg.LogPath):
-                os.makedirs(cfg.LogPath)
-            with open(os.path.join(cfg.LogPath, f"{time()}-{uri}.json"), "w") as f:
-                json.dump(data.model_dump(), f)
-
+        uri: str = data["uri"]
         if uri in self._subscribe_event:
             data_model = self._subscribe_event[uri]["data_model"].model_validate(
                 data
             )
-            write_to_file(data_model)
+            write_to_file(uri.replace("/", "-"), data_model)
             self._subscribe_event[uri]["signal"].emit(data_model)
+        else:
+            f = uri.replace("/", "-")
+            if cfg.DeBug:
+                if not os.path.exists(cfg.LogPath):
+                    os.makedirs(cfg.LogPath)
+                with open(os.path.join(cfg.LogPath, f"{time()}-{f}.json"), "w") as f:
+                    json.dump(data, f)
 
     def on_open(self, _):
         self.send([5, "OnJsonApiEvent"])

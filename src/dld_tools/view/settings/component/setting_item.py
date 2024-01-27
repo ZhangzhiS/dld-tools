@@ -1,18 +1,7 @@
 from typing import Callable
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QCheckBox, QFrame, QHBoxLayout, QLabel, QWidget
-
-
-class ItemIcon(QLabel):
-    def __init__(self, icon, diameter, parent=None) -> None:
-        super().__init__(parent)
-
-        self.setMaximumSize(diameter, diameter)
-        self.setMinimumSize(diameter, diameter)
-        self.image = QPixmap(icon)
-        self.setPixmap(self.image)
-        self.setScaledContents(True)
+from dld_tools.component.icon import ItemIcon
 
 
 class CheckBox(QCheckBox):
