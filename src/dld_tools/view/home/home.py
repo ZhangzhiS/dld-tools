@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QSizePolicy, QVBoxLayout, QWidget
+from dld_tools.component.interface_widget import InterfaceWidget
 from dld_tools.tools.lol.data_schema import CurrentSummoner, SummonerGamesInfo
 from dld_tools.view.home.component.recent_info import RecentInfoWidget
 from dld_tools.view.home.component.service_list import ItemListWidget
@@ -6,7 +7,7 @@ from dld_tools.view.home.component.service_list import ItemListWidget
 from dld_tools.view.home.component.userinfo import UserInfoWidget
 
 
-class HomeInterface(QWidget):
+class HomeInterface(InterfaceWidget):
     """主页组件"""
 
     def __init__(
@@ -14,14 +15,6 @@ class HomeInterface(QWidget):
     ) -> None:
         super().__init__(parent)
         self.setObjectName("home")
-        # 设置拉伸
-        size_policy = QSizePolicy(
-            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred
-        )
-        size_policy.setHorizontalStretch(0)
-        size_policy.setVerticalStretch(15)
-        size_policy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(size_policy)
         self.userinfo = userinfo
         self.recent_info = recent_info
 

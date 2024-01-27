@@ -27,10 +27,13 @@ class LOLProcessListener(QThread):
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self.lol_client_signal = LOLProcessSignal()
+        self.listener_status = True
 
     def run(self) -> None:
         isRunning = False
         while True:
+            if self.listener_status is False:
+                break
             pid = get_lol_process_pid()
             if pid != 0:
                 if not isRunning:
@@ -40,7 +43,10 @@ class LOLProcessListener(QThread):
                 if isRunning and not is_lol_game_process_exist():
                     isRunning = False
                     self.lol_client_signal.client_status.emit(0, isRunning)
-            self.sleep(2)
+            self.sleep(1)
+
+    def close_listener(self):
+        self.listener_status = False
 
 
 class LOLEventSingle(QObject):
@@ -66,6 +72,8 @@ class LOLEventListener(QThread):
         creds = f"riot:{self.token}".encode()
         self._headers["Authorization"] = "Basic %s" % base64.b64encode(creds).decode()
         self.url = f"wss://127.0.0.1:{self.port}"
+        if cfg.DeBug:
+            self.url = "wss://192.168.68.115:8989/ws"
 
     def on_message(self, _, message):
         try:
@@ -110,7 +118,6 @@ class LOLEventListener(QThread):
         while True:
             try:
                 resp = lol_connector.get_ux_state()
-                print(resp)
             except Exception:
                 resp = False
             if resp:

@@ -4,6 +4,8 @@ from dld_tools.core.config import cfg
 
 
 def parse_lol_auth_info(pid):
+    if cfg.DeBug:
+        return {"remoting-auth-token": "6666", "app-port": 8989}
     process = psutil.Process(pid)
     cmdline = process.cmdline()
     cmd_info = {}
@@ -17,6 +19,8 @@ def parse_lol_auth_info(pid):
 
 
 def get_lol_process_pid():
+    if cfg.DeBug:
+        return 6666
     try:
         processes = subprocess.check_output(
             'tasklist /FI "imagename eq LeagueClientUx.exe" /NH', shell=True

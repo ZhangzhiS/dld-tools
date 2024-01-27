@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 from dld_tools.view.about.about import AboutInterface
 
 from dld_tools.view.home.home import HomeInterface
+from dld_tools.view.rune.rune import RuneSourceInterface
 from dld_tools.view.settings.settings import SettingsInterface
 
 WINDOW_WIDTH = 375
@@ -40,7 +41,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(MAIN_WINDOW_QSIZE)
 
         self.version = version
-        # self.lol_process = False
+        self.lol_process = False
         self.lol_event_listener = None
         self.lol_client_listener = None
         self.tray_icon = CustomTrayIcon(self)
@@ -76,11 +77,13 @@ class MainWindow(QMainWindow):
         
     def __custome_close(self):
         self.show()
-        if self.lol_client_listener is not None:
-            self.lol_client_listener.terminate()
-        if self.lol_event_listener is not None:
-            self.lol_event_listener.terminate()
         self.close()
+        if self.lol_client_listener is not None:
+            self.lol_client_listener.close_listener()
+            self.lol_client_listener.wait()
+        if self.lol_event_listener is not None:
+            self.lol_event_listener.close_websocket()
+            self.lol_event_listener.wait()
 
     def __init_ui(self):
         """初始化UI"""
@@ -133,6 +136,7 @@ class MainWindow(QMainWindow):
 
     def lol_process_handler(self, pid: int, status):
         if status:
+            self.lol_process = True
             lol_auth_info = parse_lol_auth_info(pid)
             self.lol_token = lol_auth_info["remoting-auth-token"]
             self.lol_port = lol_auth_info["app-port"]
@@ -169,6 +173,7 @@ class MainWindow(QMainWindow):
         """初始化首页并显示"""
         self.refresh.hide()
         self.home = HomeInterface(self.main, userinfo, recent_info)
+        self.home.server_list_widget.service_signal.connect(self.init_rune_source)
         self.main_layout.removeWidget(self.refresh)
         self.main_layout.insertWidget(1, self.home)
         self.menu.question_btn.show()
@@ -198,12 +203,23 @@ class MainWindow(QMainWindow):
         self.home.hide()
         self.menu.settings_btn.hide()
         self.menu.question_btn.hide()
-        if not self.about:
-            self.about = AboutInterface(self.main)
+        # if not self.about:
+        self.about = AboutInterface(self.main)
         self.main_layout.removeWidget(self.home)
         self.main_layout.insertWidget(1, self.about)
         self.menu.menu_btn_connect(
-            self.menu.close_btn, lambda: self.back_home(self.settings)
+            self.menu.close_btn, lambda: self.back_home(self.about)
+        )
+
+    def init_rune_source(self):
+        self.home.hide()
+        self.menu.settings_btn.hide()
+        self.menu.question_btn.hide()
+        self.rune_source = RuneSourceInterface(self.main)
+        self.main_layout.removeWidget(self.home)
+        self.main_layout.insertWidget(1, self.rune_source)
+        self.menu.menu_btn_connect(
+            self.menu.close_btn, lambda: self.back_home(self.rune_source)
         )
 
     def on_disconnect_lcu(self):
@@ -215,6 +231,7 @@ class MainWindow(QMainWindow):
             self.menu.question_btn.hide()
             self.main_layout.removeWidget(self.home)
             self.main_layout.insertWidget(1, self.refresh)
+            self.lol_process = False
 
 
     def lcu_ws_status_handler(self, status: bool):

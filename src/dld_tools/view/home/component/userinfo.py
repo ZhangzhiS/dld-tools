@@ -20,7 +20,7 @@ class UserInfoWidget(QWidget):
         self.userinfo_h_layout = QHBoxLayout(self)
         self.userinfo_h_layout.setObjectName("userinfo_h_layout")
         self.userinfo_h_layout.setSpacing(0)
-        self.userinfo_h_layout.setContentsMargins(40, 0, 0, 0)
+        self.userinfo_h_layout.setContentsMargins(60, 0, 0, 0)
 
         self.display_name = display_name
         self.icon_path = icon_path
@@ -35,7 +35,7 @@ class UserInfoWidget(QWidget):
         
         # 显示玩家昵称
         self.text_info_layout = QVBoxLayout()
-        self.text_info_layout.setContentsMargins(0, 0, 40, 0)
+        self.text_info_layout.setContentsMargins(0, 0, 60, 0)
         font = QFont()
         font.setPointSize(16)
         self.nickname = QLabel(self)

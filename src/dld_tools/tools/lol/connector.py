@@ -83,15 +83,16 @@ class LOLConnector:
     def start(self, token: str, port: int):
         self.session = requests.Session()
         self.url = f"https://riot:{token}@127.0.0.1:{port}"
+        if cfg.DeBug:
+            self.url = "https://192.168.68.115:8989"
 
     def __request(self, req: BaseRequest):
         prepare_req = self.__prepare(req)
         resp = self.session.send(prepare_req, verify=False)
         
-        if resp.status_code == 200:
+        if bool(resp):
             return resp
-        elif resp.status_code == 204:
-            return True
+        raise Exception()
 
     @retry()
     def get_current_summoner(self) -> CurrentSummoner:
@@ -101,36 +102,33 @@ class LOLConnector:
         resp = self.__request(lcu_api.GetCurrentSummoner())
         return CurrentSummoner.model_validate(resp.json())
 
-    # @retry()
     def accept_game(self) -> None:
         self.__request(lcu_api.AcceptGame())
 
-    # @retry()
     def get_ready_check_status(self) -> ReadyCheckStatus:
         resp = self.__request(lcu_api.GetReadyCheckStatus())
-        print(resp.json())
         return ReadyCheckStatus.model_validate(resp.json())
 
-    # @retry()
     def get_avatar(self, avatar_id: int = 1234) -> str:
         """获取头像"""
         avatar = os.path.join(cfg.ProfileIconPath, f"{avatar_id}.jpg")
         if not os.path.exists(cfg.ProfileIconPath):
             os.makedirs(cfg.ProfileIconPath)
         if not os.path.exists(avatar):
-            res = self.__request(lcu_api.GetProfileIcon(avatar_id))
+            if cfg.DeBug:
+                res = requests.get(f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{avatar_id}.jpg")  # noqa
+            else:
+                res = self.__request(lcu_api.GetProfileIcon(avatar_id))
             with open(avatar, "wb") as f:
                 f.write(res.content)
         return avatar
 
-    # @retry()
     def get_ux_state(self) -> bool:
         resp = self.__request(lcu_api.GetUXState())
         if resp.status_code:
             return True
         return False
 
-    # @retry()
     def get_summoner_games(
         self, puuid: str, begIndex: int = 0, endIndex: int = 19
     ) -> SummonerGamesInfo:

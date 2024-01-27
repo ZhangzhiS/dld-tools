@@ -1,6 +1,7 @@
 # -- coding: utf-8 --**
 import os
 import json
+from typing import Dict
 
 from pydantic import BaseModel
 
@@ -12,6 +13,8 @@ class Config(BaseModel):
     ResourcePath: str = "resources"
 
     ProfileIconPath: str = os.path.join(ResourcePath, "game", "profile")
+
+    DataSource: Dict[str, bool] = {}
 
     # 自动接受对局
     AutoAcceptGame: bool = False
